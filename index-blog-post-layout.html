@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Infrastructure Paradox — IT Perspectives</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Epilogue:ital,wght@0,200;0,400;0,500;0,700;1,200;1,400&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --ink: #0F0E0C;
+    --ink-soft: #2C2B28;
+    --ink-mid: #6B6860;
+    --ink-faint: #B8B5AD;
+    --ink-ghost: #E8E5DE;
+    --paper: #F5F2EA;
+    --paper-white: #FDFBF7;
+    --red: #C8281E;
+    --red-dark: #8B1A12;
+    --red-pale: #F9ECEB;
+    --rule: #D8D4CB;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Epilogue', sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--red);
+    width: 0%;
+    z-index: 200;
+    transition: width 0.1s linear;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .masthead-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.15em;
+    color: var(--paper);
+    text-decoration: none;
+  }
+
+  .masthead-logo span { color: var(--red); }
+
+  .masthead-nav {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .masthead-nav a {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .masthead-nav a:hover { color: var(--paper); }
+
+  .masthead-issue {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--ink-mid);
+    font-weight: 200;
+    font-style: italic;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideRight {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  @keyframes expandDown {
+    from { clip-path: inset(0 0 100% 0); }
+    to { clip-path: inset(0 0 0% 0); }
+  }
+
+  /* ── HERO ARTICLE HEADER ── */
+  .article-header {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 72px 48px 0;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 64px;
+    align-items: start;
+  }
+
+  .article-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .article-category::before {
+    content: '';
+    width: 24px;
+    height: 2px;
+    background: var(--red);
+    display: block;
+  }
+
+  .article-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(42px, 5.5vw, 76px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 28px;
+    animation: fadeUp 0.7s ease 0.2s both;
+  }
+
+  .article-title em {
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .article-deck {
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-weight: 200;
+    font-style: italic;
+    border-left: 3px solid var(--red);
+    padding-left: 24px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.7s ease 0.35s both;
+  }
+
+  .article-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--ink-mid);
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    animation: fadeUp 0.7s ease 0.5s both;
+  }
+
+  .meta-sep { color: var(--rule); }
+
+  .reading-time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--red-pale);
+    color: var(--red);
+    padding: 4px 10px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+  }
+
+  /* ── AUTHOR CARD (sidebar) ── */
+  .author-sidebar {
+    padding-top: 8px;
+    animation: fadeUp 0.7s ease 0.4s both;
+  }
+
+  .author-card {
+    background: var(--paper-white);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--ink);
+    padding: 28px;
+    position: sticky;
+    top: 80px;
+  }
+
+  .author-card-label {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+
+  .author-avatar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .author-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--paper);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .author-avatar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 50%, rgba(200,40,30,0.3) 100%);
+  }
+
+  .author-name {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    line-height: 1.2;
+    color: var(--ink);
+  }
+
+  .author-title {
+    font-size: 11px;
+    color: var(--red);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  .author-bio {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+
+  .author-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    margin-bottom: 20px;
+  }
+
+  .author-stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  .author-stat-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+
+  .author-follow-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Epilogue', sans-serif;
+    transition: background 0.2s;
+    text-decoration: none;
+  }
+
+  .author-follow-btn:hover { background: var(--red); }
+
+  .author-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 16px;
+  }
+
+  .author-tag {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid var(--rule);
+    color: var(--ink-mid);
+    padding: 4px 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .author-tag:hover {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+
+  /* ── HERO IMAGE ── */
+  .hero-image-wrap {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    padding: 0 48px;
+    animation: fadeIn 1s ease 0.6s both;
+  }
+
+  .hero-image {
+    width: 100%;
+    aspect-ratio: 16/7;
+    background:
+      linear-gradient(135deg, var(--ink) 0%, #1E1C18 40%, #2C2215 70%, var(--ink-soft) 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    padding: 32px;
+  }
+
+  /* Abstract server room pattern */
+  .hero-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px);
+  }
+
+  .hero-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(0deg, rgba(15,14,12,0.8) 0%, transparent 100%);
+  }
+
+  .hero-image-caption {
+    position: relative;
+    z-index: 1;
+    font-size: 11px;
+    color: rgba(245,242,234,0.5);
+    letter-spacing: 0.15em;
+    font-style: italic;
+  }
+
+  /* Decorative server rack elements */
+  .rack-visual {
+    position: absolute;
+    top: 20px;
+    right: 60px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    opacity: 0.15;
+  }
+
+  .rack-unit {
+    width: 28px;
+    height: 8px;
+    background: var(--paper);
+    border-radius: 1px;
+  }
+
+  .rack-unit:nth-child(3n) { background: var(--red); opacity: 0.8; }
+  .rack-unit:nth-child(5n) { opacity: 0.4; }
+
+  /* ── ARTICLE BODY ── */
+  .article-layout {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 64px;
+    align-items: start;
+    margin-top: 60px;
+  }
+
+  .article-body {
+    min-width: 0;
+  }
+
+  .article-body p {
+    font-size: 17px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    margin-bottom: 28px;
+    font-weight: 400;
+  }
+
+  .article-body p:first-child::first-letter {
+    font-family: 'DM Serif Display', serif;
+    font-size: 72px;
+    line-height: 0.75;
+    float: left;
+    margin-right: 8px;
+    margin-top: 10px;
+    color: var(--ink);
+  }
+
+  .article-body h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--ink);
+    margin: 52px 0 20px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+
+  .article-body h3 {
+    font-family: 'Epilogue', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin: 40px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .article-body h3::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .pullquote {
+    margin: 48px -32px;
+    padding: 36px 32px;
+    background: var(--ink);
+    color: var(--paper);
+    position: relative;
+  }
+
+  .pullquote::before {
+    content: '"';
+    font-family: 'DM Serif Display', serif;
+    font-size: 120px;
+    color: var(--red);
+    position: absolute;
+    top: -20px;
+    left: 24px;
+    line-height: 1;
+    opacity: 0.6;
+  }
+
+  .pullquote p {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px !important;
+    line-height: 1.4 !important;
+    color: var(--paper) !important;
+    margin: 0 !important;
+    font-style: italic;
+    position: relative;
+    z-index: 1;
+  }
+
+  .pullquote cite {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-top: 16px;
+    font-style: normal;
+    font-weight: 700;
+    font-family: 'Epilogue', sans-serif;
+  }
+
+  .stat-callout {
+    background: var(--red-pale);
+    border-left: 4px solid var(--red);
+    padding: 24px 28px;
+    margin: 36px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .stat-callout-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--red);
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+  }
+
+  .stat-callout-text {
+    font-size: 14px;
+    color: var(--red-dark);
+    line-height: 1.6;
+    font-style: italic;
+    margin: 0;
+    padding-top: 6px;
+  }
+
+  .article-rule {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 48px 0;
+  }
+
+  .article-rule.heavy {
+    border-top: 3px solid var(--ink);
+  }
+
+  /* ── ARTICLE SIDEBAR CONTENT ── */
+  .article-sidebar-content {
+    padding-top: 0;
+  }
+
+  .sidebar-widget {
+    margin-bottom: 48px;
+  }
+
+  .sidebar-widget-label {
+    font-size: 9px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sidebar-widget-label::before {
+    content: '';
+    width: 16px;
+    height: 2px;
+    background: var(--red);
+    flex-shrink: 0;
+  }
+
+  /* TOC */
+  .toc-list {
+    list-style: none;
+    counter-reset: toc;
+  }
+
+  .toc-item {
+    counter-increment: toc;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--rule);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toc-item:hover .toc-text { color: var(--red); }
+
+  .toc-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    width: 20px;
+  }
+
+  .toc-num::before { content: counter(toc, decimal-leading-zero); }
+
+  .toc-text {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--ink-soft);
+    transition: color 0.2s;
+    font-weight: 400;
+  }
+
+  /* Reading progress widget */
+  .reading-widget {
+    background: var(--paper-white);
+    border: 1px solid var(--rule);
+    padding: 20px;
+  }
+
+  .reading-widget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .reading-widget-label-text {
+    font-size: 11px;
+    color: var(--ink-mid);
+    letter-spacing: 0.1em;
+  }
+
+  .reading-pct {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+  }
+
+  .reading-track {
+    height: 3px;
+    background: var(--ink-ghost);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reading-fill {
+    height: 100%;
+    background: var(--red);
+    width: 0%;
+    transition: width 0.2s ease;
+  }
+
+  .reading-mins-left {
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  /* ── TAGS ── */
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .article-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    padding: 6px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .article-tag:hover {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .article-tag.accent {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  /* ── SHARE STRIP ── */
+  .share-strip {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 0;
+    border-top: 3px solid var(--ink);
+    border-bottom: 1px solid var(--rule);
+    margin-top: 48px;
+  }
+
+  .share-label {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+
+  .share-btn {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    background: none;
+    color: var(--ink-mid);
+    cursor: pointer;
+    font-family: 'Epilogue', sans-serif;
+    font-weight: 700;
+    transition: all 0.2s;
+  }
+
+  .share-btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+
+  /* ── RELATED ARTICLES ── */
+  .related-section {
+    background: var(--ink);
+    padding: 72px 48px;
+    margin-top: 80px;
+  }
+
+  .related-header {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .related-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    color: var(--paper);
+    letter-spacing: -0.01em;
+  }
+
+  .related-view-all {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--red);
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid var(--red);
+    padding-bottom: 2px;
+    transition: opacity 0.2s;
+  }
+
+  .related-view-all:hover { opacity: 0.7; }
+
+  .related-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .related-card {
+    background: var(--ink);
+    padding: 36px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s;
+    overflow: hidden;
+    text-decoration: none;
+    display: block;
+  }
+
+  .related-card:hover { background: #1A1916; }
+
+  .related-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .related-card:hover::after { transform: scaleX(1); }
+
+  .related-card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    letter-spacing: 0.03em;
+    transition: color 0.3s;
+  }
+
+  .related-card:hover .related-card-num {
+    color: rgba(200,40,30,0.15);
+  }
+
+  .related-card-cat {
+    font-size: 9px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--red);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .related-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--paper);
+    line-height: 1.2;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .related-card.featured .related-card-title {
+    font-size: 30px;
+  }
+
+  .related-card-excerpt {
+    font-size: 12px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .related-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    color: var(--ink-mid);
+    letter-spacing: 0.1em;
+  }
+
+  .related-card-read-time {
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  /* ── FOOTER ── */
+  .footer-strip {
+    background: var(--paper-white);
+    border-top: 1px solid var(--rule);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    letter-spacing: 0.15em;
+    color: var(--ink);
+  }
+
+  .footer-logo span { color: var(--red); }
+
+  .footer-copy {
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    font-style: italic;
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .article-header,
+    .article-layout {
+      grid-template-columns: 1fr;
+    }
+    .author-sidebar { position: static; }
+    .related-grid { grid-template-columns: 1fr; }
+    .masthead-nav,
+    .masthead-issue { display: none; }
+  }
+</style>
+</head>
+
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <a href="#" class="masthead-logo">IT<span>·</span>PERSPECTIVES</a>
+  <nav>
+    <ul class="masthead-nav">
+      <li><a href="#">Infrastructure</a></li>
+      <li><a href="#">Security</a></li>
+      <li><a href="#">Leadership</a></li>
+      <li><a href="#">Cloud</a></li>
+    </ul>
+  </nav>
+  <span class="masthead-issue">Vol. XIV — March 2025</span>
+</header>
+
+<!-- ARTICLE HEADER -->
+<div class="article-header">
+  <div>
+    <div class="article-category">Infrastructure & Strategy</div>
+    <h1 class="article-title">The Infrastructure<br>Paradox: <em>Spending<br>More to Do Less</em></h1>
+    <p class="article-deck">Why the most consequential IT investments are the ones your users will never notice — and why your budget committee will never understand that.</p>
+    <div class="article-meta">
+      <span>March 14, 2025</span>
+      <span class="meta-sep">—</span>
+      <span class="reading-time">⏱ 8 MIN READ</span>
+      <span class="meta-sep">—</span>
+      <span>2,400 words</span>
+      <span class="meta-sep">—</span>
+      <span>1.2k views</span>
+    </div>
+  </div>
+
+  <!-- AUTHOR SIDEBAR -->
+  <div class="author-sidebar">
+    <div class="author-card">
+      <div class="author-card-label">About the Author</div>
+      <div class="author-avatar-wrap">
+        <div class="author-avatar">DM</div>
+        <div>
+          <div class="author-name">David Marek</div>
+          <div class="author-title">Head of IT Infrastructure</div>
+        </div>
+      </div>
+      <p class="author-bio">
+        18 years building and breaking enterprise systems. Former sysadmin turned IT director who still reads access logs for fun.
+      </p>
+      <div class="author-stats">
+        <div>
+          <div class="author-stat-val">143</div>
+          <div class="author-stat-label">Articles</div>
+        </div>
+        <div>
+          <div class="author-stat-val">47K</div>
+          <div class="author-stat-label">Followers</div>
+        </div>
+        <div>
+          <div class="author-stat-val">18</div>
+          <div class="author-stat-label">Yrs Experience</div>
+        </div>
+        <div>
+          <div class="author-stat-val">6</div>
+          <div class="author-stat-label">Certifications</div>
+        </div>
+      </div>
+      <a href="#" class="author-follow-btn">Follow Author</a>
+      <div class="author-tags">
+        <span class="author-tag">Azure</span>
+        <span class="author-tag">VMware</span>
+        <span class="author-tag">SecOps</span>
+        <span class="author-tag">ITIL</span>
+        <span class="author-tag">Budgeting</span>
+        <span class="author-tag">DR</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO IMAGE -->
+<div class="hero-image-wrap">
+  <div class="hero-image">
+    <div class="rack-visual">
+      <div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div>
+      <div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div>
+      <div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div>
+      <div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div>
+      <div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div>
+      <div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div><div class="rack-unit"></div>
+    </div>
+    <span class="hero-image-caption">Photograph: Server room, Enterprise DC Warsaw — 2024</span>
+  </div>
+</div>
+
+<!-- ARTICLE LAYOUT -->
+<div class="article-layout">
+  <!-- BODY -->
+  <article class="article-body" id="article-body">
+    <p>
+      There is a particular kind of meeting that every IT manager eventually learns to dread: the one where a senior executive slides a printed slide across the table and asks, with genuine puzzlement, why the IT budget keeps growing while end users keep complaining that nothing has changed. This is the infrastructure paradox in its purest form.
+    </p>
+
+    <p>
+      The problem is not the technology. It rarely is. The problem is that the most valuable work in enterprise IT is fundamentally invisible. When your backup and replication strategy works, no one calls you. When the failover cluster silently promotes a secondary node at 3 AM on a Sunday, no one sends a thank-you email. When the network segmentation you spent three months designing stops a ransomware payload from spreading beyond a single workstation, you will probably only find out weeks later from a forensics report.
+    </p>
+
+    <h2>Why Good Infrastructure Is a Ghost</h2>
+
+    <p>
+      The visibility bias in IT is structural. Help desk tickets, incident reports, change management logs — these systems are designed to capture failure, not success. Your 99.97% uptime is not a data point in any executive dashboard. Your three near-misses last quarter that never became incidents because your monitoring caught them at 2 AM are, from the board's perspective, non-events.
+    </p>
+
+    <div class="stat-callout">
+      <div class="stat-callout-num">$5.9T</div>
+      <p class="stat-callout-text">The estimated global cost of cybercrime in 2024. The IT departments that contributed zero to that statistic will receive no credit for it. Their budgets will be questioned anyway.</p>
+    </div>
+
+    <p>
+      This creates a perverse incentive structure. The IT manager who lets a crisis develop and then heroically resolves it is more visible — and often more celebrated — than the manager who prevents crises from developing in the first place. Reactive IT makes for better storytelling than proactive IT. It always has.
+    </p>
+
+    <h3>The Budget Theatre Problem</h3>
+
+    <p>
+      Every year, most IT managers perform a ritual that could charitably be called budget theatre. You know which line items will get cut — monitoring platform licenses, additional failover capacity, the DR simulation you've been trying to schedule for two years — and you pad accordingly. You frame investments in terms of risk (because cost savings are increasingly hard to manufacture) and you hope that someone in the room has lived through enough outages to understand the difference between "this seems expensive" and "this is why we're still in business."
+    </p>
+
+    <div class="pullquote">
+      <p>The most dangerous sentence in enterprise IT is: 'But that's never happened to us before.'</p>
+      <cite>— David Marek, Head of IT Infrastructure</cite>
+    </div>
+
+    <p>
+      What rarely gets said in these meetings — and this is the infrastructure paradox made explicit — is that the organization has been optimizing for the wrong metric. You have been measuring IT by what it costs. You should be measuring it by what failures it prevented, and assigning those prevented failures a dollar value.
+    </p>
+
+    <h2>Making the Invisible Legible</h2>
+
+    <p>
+      The solution is not better technology. It is better translation. The IT manager's most undervalued skill is not their ability to architect a resilient system — it is their ability to explain that architecture to someone who has never administered a server in their life, in terms that convert technical decisions into business outcomes.
+    </p>
+
+    <p>
+      This means building a parallel reporting layer: a business-facing view of your infrastructure's performance that communicates in the language of continuity, risk reduction, and competitive posture. Not uptime percentages — but 'our customer portal was available for every order placed during the peak season.' Not 'we patched 340 vulnerabilities' — but 'we closed the specific attack vectors used in the breach that cost our competitor €2.3 million in Q3.'
+    </p>
+
+    <p>
+      The infrastructure will remain invisible. That is its job. But your management of that infrastructure does not have to be.
+    </p>
+
+    <hr class="article-rule heavy">
+
+    <div class="article-tags">
+      <span class="article-tag accent">Infrastructure</span>
+      <span class="article-tag">IT Strategy</span>
+      <span class="article-tag">Budget</span>
+      <span class="article-tag">Leadership</span>
+      <span class="article-tag">Enterprise IT</span>
+      <span class="article-tag">Risk Management</span>
+    </div>
+
+    <div class="share-strip">
+      <span class="share-label">Share this piece</span>
+      <button class="share-btn">LinkedIn</button>
+      <button class="share-btn">Twitter</button>
+      <button class="share-btn">Copy Link</button>
+    </div>
+  </article>
+
+  <!-- SIDEBAR -->
+  <aside class="article-sidebar-content">
+
+    <!-- Reading Progress -->
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-label">Reading Progress</div>
+      <div class="reading-widget">
+        <div class="reading-widget-header">
+          <span class="reading-widget-label-text">Article progress</span>
+          <span class="reading-pct" id="pct-display">0%</span>
+        </div>
+        <div class="reading-track">
+          <div class="reading-fill" id="reading-fill"></div>
+        </div>
+        <div class="reading-mins-left" id="mins-left">About 8 min remaining</div>
+      </div>
+    </div>
+
+    <!-- Table of Contents -->
+    <div class="sidebar-widget reveal">
+      <div class="sidebar-widget-label">In this article</div>
+      <ul class="toc-list">
+        <li class="toc-item"><span class="toc-num"></span><span class="toc-text">The Infrastructure Paradox Explained</span></li>
+        <li class="toc-item"><span class="toc-num"></span><span class="toc-text">Why Good Infrastructure Is a Ghost</span></li>
+        <li class="toc-item"><span class="toc-num"></span><span class="toc-text">The Budget Theatre Problem</span></li>
+        <li class="toc-item"><span class="toc-num"></span><span class="toc-text">Making the Invisible Legible</span></li>
+      </ul>
+    </div>
+
+  </aside>
+</div>
+
+<!-- RELATED ARTICLES -->
+<section class="related-section">
+  <div class="related-header">
+    <h2 class="related-title">Continue Reading</h2>
+    <a href="#" class="related-view-all">All Articles →</a>
+  </div>
+  <div class="related-grid">
+    <a href="#" class="related-card featured">
+      <div class="related-card-num">01</div>
+      <div class="related-card-cat">Security</div>
+      <h3 class="related-card-title">Zero Trust Is Not a Product. It's a Reckoning.</h3>
+      <p class="related-card-excerpt">Three years into our zero-trust migration, I can tell you exactly what the vendors won't: it requires organizational change that most IT teams are completely unprepared to facilitate.</p>
+      <div class="related-card-meta">
+        <span>Feb 28, 2025</span>
+        <span class="related-card-read-time">12 min</span>
+      </div>
+    </a>
+    <a href="#" class="related-card">
+      <div class="related-card-num">02</div>
+      <div class="related-card-cat">Cloud</div>
+      <h3 class="related-card-title">The Hidden Cost of Cloud-First Mandates</h3>
+      <p class="related-card-excerpt">When the directive comes from above, the numbers rarely add up the way the consultants said they would.</p>
+      <div class="related-card-meta">
+        <span>Feb 12, 2025</span>
+        <span class="related-card-read-time">7 min</span>
+      </div>
+    </a>
+    <a href="#" class="related-card">
+      <div class="related-card-num">03</div>
+      <div class="related-card-cat">Leadership</div>
+      <h3 class="related-card-title">Managing Up: How IT Leaders Win Budget Conversations</h3>
+      <p class="related-card-excerpt">The presentation skills no one teaches in ITIL certification courses but every IT manager desperately needs.</p>
+      <div class="related-card-meta">
+        <span>Jan 30, 2025</span>
+        <span class="related-card-read-time">10 min</span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-strip">
+  <div class="footer-logo">IT<span>·</span>PERSPECTIVES</div>
+  <div class="footer-copy">Publishing independently since 2011. No sponsored content, ever.</div>
+</footer>
+
+<script>
+// Progress bar + sidebar reading widget
+const progressBar = document.getElementById('progress-bar');
+const readingFill = document.getElementById('reading-fill');
+const pctDisplay = document.getElementById('pct-display');
+const minsLeft = document.getElementById('mins-left');
+const totalMins = 8;
+
+function updateProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = Math.min(100, Math.round((scrollTop / docHeight) * 100));
+
+  progressBar.style.width = pct + '%';
+  readingFill.style.width = pct + '%';
+  pctDisplay.textContent = pct + '%';
+
+  const remaining = Math.max(0, Math.ceil(totalMins * (1 - pct / 100)));
+  minsLeft.textContent = remaining === 0
+    ? 'Finished — nicely done.'
+    : `About ${remaining} min remaining`;
+}
+
+window.addEventListener('scroll', updateProgress, { passive: true });
+
+// Scroll-triggered reveals
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
